@@ -1,0 +1,192 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Aplikasi Guru & Absensi</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- FORM LOGIN -->
+  <div *ngIf="!isLoggedIn">
+    <ion-item>
+      <ion-label position="floating">Username</ion-label>
+      <ion-input [(ngModel)]="username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" [(ngModel)]="password"></ion-input>
+    </ion-item>
+    <ion-button expand="block" color="primary" (click)="login()">
+      <ion-icon slot="start" name="log-in-outline"></ion-icon> Login
+    </ion-button>
+  </div>
+
+  <!-- MENU SETELAH LOGIN -->
+  <div *ngIf="isLoggedIn">
+
+    <!-- Menu Card -->
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card button (click)="menu='guru'">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="person-add-outline" size="large" color="secondary"></ion-icon>
+              <p>Input Data Guru</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card button (click)="menu='absensi'">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="reader-outline" size="large" color="tertiary"></ion-icon>
+              <p>Absensi siswa</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+      <ion-card button (click)="menu='rekapGuru'">
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="document-text-outline" size="large" color="warning"></ion-icon>
+          <p>Absensi Guru</p>
+        </ion-card-content>
+      </ion-card>
+<ion-button expand="block" color="primary" (click)="getAbsensiGuru()" [disabled]="isLoadingGuru">
+  <ion-icon slot="start" name="refresh-outline"></ion-icon>
+  <span *ngIf="!isLoadingGuru">Muat Ulang Data</span>
+  <ion-spinner *ngIf="isLoadingGuru" name="dots"></ion-spinner>
+</ion-button>
+
+
+    </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- FORM INPUT GURU -->
+    <form *ngIf="menu==='guru'" (ngSubmit)="tambahGuru()">
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Nama</ion-label>
+          <ion-input [(ngModel)]="guru.nama" name="nama" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">NIP</ion-label>
+          <ion-input [(ngModel)]="guru.nip" name="nip" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Alamat</ion-label>
+          <ion-input [(ngModel)]="guru.alamat" name="alamat" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input [(ngModel)]="guru.email" name="email" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">No HP</ion-label>
+          <ion-input [(ngModel)]="guru.no_hp" name="no_hp" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Jenis Kelamin</ion-label>
+          <ion-select [(ngModel)]="guru.jenis_kelamin" name="jenis_kelamin" required>
+            <ion-select-option value="Laki-laki">Laki-laki</ion-select-option>
+            <ion-select-option value="Perempuan">Perempuan</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Tempat Lahir</ion-label>
+          <ion-input [(ngModel)]="guru.tempat_lahir" name="tempat_lahir" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Tanggal Lahir</ion-label>
+          <ion-datetime display-format="YYYY-MM-DD" [(ngModel)]="guru.tanggal_lahir" name="tanggal_lahir" required></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label>Foto</ion-label>
+          <input type="file" (change)="onFileSelected($event)">
+        </ion-item>
+      </ion-list>
+      <ion-button expand="full" type="submit" color="success">
+        <ion-icon slot="start" name="save-outline"></ion-icon> Simpan Data Guru
+      </ion-button>
+    </form>
+   <div *ngIf="menu==='rekapGuru'">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Rekap Absensi Guru</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Tanggal</ion-label>
+        <ion-datetime presentation="date" [(ngModel)]="filterTanggalGuru"></ion-datetime>
+      </ion-item>
+      <ion-button expand="block" color="primary" (click)="getAbsensiGuru()">
+        <ion-icon slot="start" name="search-outline"></ion-icon> Tampilkan Data
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="absensiGuruList.length > 0">
+    <ion-item *ngFor="let a of absensiGuruList; let i = index">
+      <ion-avatar slot="start">
+        <ion-icon name="person-circle-outline" size="large"></ion-icon>
+      </ion-avatar>
+      <ion-label>
+        <h2>{{i+1}}. {{a.nama_guru}} ({{a.mapel}})</h2>
+        <p>Jam: {{a.jam_masuk}} | Kelas: {{a.kelas}}</p>
+        <p>Tanggal: {{a.tanggal}} | Status: {{a.status}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <p *ngIf="absensiGuruList.length === 0" class="ion-text-center">Belum ada data.</p>
+</div>
+
+
+
+    <!-- REKAP ABSENSI SISWA -->
+    <div *ngIf="menu==='absensi'">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Filter Data Absensi</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="floating">Kelas</ion-label>
+            <ion-select [(ngModel)]="filterKelas">
+              <ion-select-option value="">Semua</ion-select-option>
+              <ion-select-option *ngFor="let k of kelasList" [value]="k">{{k}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Tanggal</ion-label>
+            <ion-datetime presentation="date" [(ngModel)]="filterTanggal"></ion-datetime>
+          </ion-item>
+          <ion-button expand="block" color="primary" (click)="getAbsensi()">
+            <ion-icon slot="start" name="search-outline"></ion-icon> Tampilkan Data
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-button expand="block" color="success" (click)="exportToWord()">
+        <ion-icon slot="start" name="document-text-outline"></ion-icon> Export ke Word
+      </ion-button>
+      <ion-button expand="block" color="warning" (click)="exportToExcel()">
+        <ion-icon slot="start" name="document-outline"></ion-icon> Export ke Excel
+      </ion-button>
+
+      <ion-list *ngIf="absensiList.length > 0">
+        <ion-item *ngFor="let a of absensiList; let i = index">
+          <ion-avatar slot="start">
+            <ion-icon name="person-circle-outline" size="large"></ion-icon>
+          </ion-avatar>
+          <ion-label>
+            <h2>{{i+1}}. {{a.nama}} ({{a.kelas}})</h2>
+            <p>Mapel: {{a.mapel}} | Guru: {{a.nama_guru}}</p>
+            <p>Jam: {{a.jam_masuk}} | Tanggal: {{a.tanggal}} | Status: {{a.status}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <p *ngIf="absensiList.length === 0" class="ion-text-center">Belum ada data.</p>
+    </div>
+  </div>
+
+</ion-content>
