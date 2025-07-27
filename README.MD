@@ -1,4 +1,4 @@
-# Aplikasi SMP Metodist
+# Aplikasi SD Metodist 1
 
 Aplikasi SMP Metodist adalah sistem informasi sekolah digital yang dirancang untuk mempermudah manajemen data siswa, guru, nilai, absensi, dan informasi kegiatan sekolah. Aplikasi ini dapat diakses oleh siswa, guru, dan admin melalui antarmuka yang responsif dan ramah pengguna.
 
