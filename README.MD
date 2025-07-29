@@ -28,8 +28,8 @@ Aplikasi SMP Metodist adalah sistem informasi sekolah digital yang dirancang unt
 
 - **Frontend**: Ionic / Angular / HTML / CSS / TypeScript
 - **Backend**: PHP (Native atau Laravel)
-- **Database**: MySQL
-- **API**: RESTful API berbasis PHP
+- **Database**: MySQL "data_guru.sql" ada di folder api
+- **API**: RESTful API berbasis PHP berada di folder api
 - **Server**: Apache (XAMPP / Hosting / VPS)
 
 ## ⚙️ Instalasi & Konfigurasi
@@ -38,3 +38,6 @@ Aplikasi SMP Metodist adalah sistem informasi sekolah digital yang dirancang unt
 ```bash
 git clone https://github.com/roginaa/smpmetodist.git
 cd smp-metodist-app
+ionic serve
+
+
